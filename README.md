@@ -9,5 +9,5 @@ MarcoYolo
 5. When Marco tags another player, that player sends a Yo to MarcoYolo, ending the round.
 
 ####Running server:
-$ npm install
-$ api_token='your_api_token' node server.js
+1. $ npm install
+2. $ api_token='your_api_token' node server.js
