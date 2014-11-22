@@ -6,7 +6,8 @@ var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
 var openGames = {};
-var activeGames = [];
+var usersInGames = {};
+
 var REGISTRATION_WINDOW = 30; //seconds
 
 app.get('/play', function(req, res){
@@ -16,25 +17,25 @@ app.get('/play', function(req, res){
   if( yo.location ){
     // if open game nearby exists then join that game
     if ( gameExists(yo.location) ){
-      openGames[area].push(yo.username);
-    // else create game
+      openGames[area].addPlayer(yo.username);
     } else {
+    // else create game
       var thisGame = new Game(yo.username, yo.location);
       openGames[area] = thisGame;
       setTimeout(function(){
-        activeGames.push(thisGame);
         delete openGames[area];
+        thisGame.init(usersInGames);
       }, REGISTRATION_WINDOW*1000);
     }
   } else {
-    thisGame = activeGames.findGame(yo.username);
+    thisGame = usersInGames[yo.username];
     var marko = thisGame.getMarko();
     // if game.active and yo from marko, yoeach non-player
     if(yo.username === marko){
       thisGame.yoNonMarkos();
-    // if game.active and yo from non-player, end game
     } else {
-      thisGame.end();
+    // else game.active and yo from non-player, end game
+      thisGame.end(yo.username, usersInGames);
     }
   }
 });
