@@ -1,13 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var request = require('request');
-var calculators = require('./calculators');
+var Game = require('./game');
 
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
-var api_token = process.env.api_token;
 var openGames = {};
+var activeGames = [];
+var REGISTRATION_WINDOW = 30; //seconds
 
 app.post('/yos', function(req, res){
   // body should contain usernames array
@@ -29,13 +29,23 @@ app.get('/play', function(req, res){
       openGames[area].push(yo.username);
     // else create game
     } else {
-      openGames.push(new Game(yo.username, yo.location));
+      var thisGame = new Game(yo.username, yo.location);
+      openGames[area] = thisGame;
+      setTimeout(function(){
+        activeGames.push(thisGame);
+        delete openGames[area];
+      }, REGISTRATION_WINDOW*1000);
     }
   } else {
-    //
+    thisGame = activeGames.findGame(yo.username);
+    var marko = thisGame.getMarko();
     // if game.active and yo from marko, yoeach non-player
-    //
+    if(yo.username === marko){
+      thisGame.yoNonMarkos();
     // if game.active and yo from non-player, end game
+    } else {
+      thisGame.end();
+    }
   }
 });
 
