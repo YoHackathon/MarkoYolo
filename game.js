@@ -26,4 +26,4 @@ Game.prototype.getMarko = function() {
   return this.marko;
 };
 
-module.exports = Game();
+module.exports = Game;
