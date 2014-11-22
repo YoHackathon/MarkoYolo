@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
+var calculators = require('./calculators');
 
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
