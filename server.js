@@ -20,10 +20,10 @@ app.post('/yos', function(req, res){
 });
 
 app.get('/play', function(req, res){
-  console.log(req.query)
-  var yo = req.body;
+  var yo = req.query;
+  console.log(yo)
   // if @yo
-  if( yo.hasOwnProperty('location') ){
+  if( yo.location ){
     var area = yo.location.split(',').reduce(function(coordinate, index){
       return String(Math.round(Number(coordinate), 4)+index ? ',' : '');
     },'');
@@ -44,8 +44,8 @@ app.get('/play', function(req, res){
 });
 
 var server = app.listen(3000, function () {
-  var host = server.address().address
-  var port = server.address().port
+  var host = server.address().address;
+  var port = server.address().port;
   console.log('Example app listening at http://%s:%s', host, port)
 });
 
