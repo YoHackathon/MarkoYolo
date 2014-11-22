@@ -1,0 +1,26 @@
+{
+  "name": "MarcoYolo",
+  "version": "0.9.0",
+  "description": "Marco Polo with Yo!",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.9.3",
+    "express": "^4.10.2",
+    "request": "^2.48.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YoHackathon/MarcoYolo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YoHackathon/MarcoYolo/issues"
+  },
+  "homepage": "https://github.com/YoHackathon/MarcoYolo"
+}

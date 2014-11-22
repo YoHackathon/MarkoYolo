@@ -1,20 +1,48 @@
-/* post /yo/
-curl -H "Content-Type: application/json" -d '{"username":"MLUBY","api_token":"e95c427dcf979105509476f7b676f2d049904484"}' http://api.justyo.co/yo/
-*/
+var express = require('express');
+var bodyParser = require('body-parser');
+var request = require('request');
 
-var yo = {
-  api_token: 'api_token',
-  username: 'recipients_username',
-  link: 'optional_link',
-  // XOR
-  location: 'optional_lat,long'
+var api_token = process.env.api_token;
+var app = express();
+app.use(bodyParser.json()); // for parsing application/json
+
+// send a yo:
+var sendYo = function(username){
+  request.post(
+    'http://api.justyo.co/yo/',
+    { form:
+      {
+        'api_token': api_token,
+        'username': username
+        // optional link XOR location string parameter
+      },
+    },
+    function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log(body);
+      }
+    }
+  );
 };
 
-/* POST https://api.justyo.co/yoall/ {api_token: 'api_token', link: 'link'}
-curl -H "Content-Type: application/json" -d '{"api_token":"e95c427dcf979105509476f7b676f2d049904484"}' http://api.justyo.co/yoall/
-*/
-
-var yoall = {
-  api_token: 'api_token',
-  link: 'optional_link',
+var sendYos = function(usernames){
+  usernames.forEach(function(username){
+    sendYo(username);
+  });
 };
+
+app.post('/yos', function(req, res){
+  // body should contain usernames array
+  // sends a yo (with optional link or location) to each username
+  // returns success, partial success, or total failure
+  console.log(req.body);
+  var usernames = req.body.usernames;
+  sendYos(usernames);
+  res.send(200,'OKAY');
+});
+
+var server = app.listen(3000, function () {
+  var host = server.address().address
+  var port = server.address().port
+  console.log('Example app listening at http://%s:%s', host, port)
+});
