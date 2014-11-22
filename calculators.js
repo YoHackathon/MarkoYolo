@@ -2,7 +2,7 @@
 if (typeof(Number.prototype.toRad) === "undefined") {
   Number.prototype.toRadians = function() {
     return this * Math.PI / 180;
-  }
+  };
 }
 
 exports.distance = function(loc1String, loc2String){
@@ -28,7 +28,6 @@ exports.distance = function(loc1String, loc2String){
   var distance = R * c;
 
   return distance; // returned in km
-
-}
+};
 
 

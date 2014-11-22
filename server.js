@@ -6,7 +6,7 @@ var calculators = require('./calculators');
 var api_token = process.env.api_token;
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
-console.log(calculators.distance("37.770194;-122.429239", "37.783679;-122.408969")  )
+
 // send a yo:
 var sendYo = function(username){
   request.post(
