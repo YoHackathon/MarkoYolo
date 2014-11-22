@@ -14,13 +14,9 @@ app.get('/play', function(req, res){
   console.log(yo)
   // if @yo
   if( yo.location ){
-    var area = yo.location.split(';').reduce(function(coordinate, index){
-      return String(Math.round(Number(coordinate), 4)+index ? ';' : '');
-    },'');
-    console.log('Rounded',yo.username,'area to',area);
     // if open game nearby exists then join that game
-    if( openGames.indexOf(area) >= 0 ){
-      openGames[area].addPlayer(yo.username, yo.location);
+    if ( gameExists(yo.location) ){
+      openGames[area].push(yo.username);
     // else create game
     } else {
       var thisGame = new Game(yo.username, yo.location);
@@ -30,7 +26,6 @@ app.get('/play', function(req, res){
         delete openGames[area];
       }, REGISTRATION_WINDOW*1000);
     }
-  // if normal yo
   } else {
     thisGame = activeGames.findGame(yo.username);
     var marko = thisGame.getMarko();
@@ -49,3 +44,21 @@ var server = app.listen(3000, function () {
   var port = server.address().port;
   console.log('Example app listening at http://%s:%s', host, port)
 });
+
+function gameExists(userLocation){
+  // get list of pending games
+  var pendingGames = Object.keys(openGames);
+
+  // if game is within 10 ft of another game, return true
+  return pendingGames.some(function(pendingGame){
+    var distance = calculators.distance(pendingGame, userLocation).toFeet();
+    return distance < 10;
+  });
+}
+
+/** Converts numeric km to ft */
+if (typeof(Number.prototype.toFeet) === "undefined") {
+  Number.prototype.toFeet = function() {
+    return this * 3280.84;
+  };
+}

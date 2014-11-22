@@ -1,5 +1,5 @@
 /** Converts numeric degrees to radians */
-if (typeof(Number.prototype.toRad) === "undefined") {
+if (typeof(Number.prototype.toRadians) === "undefined") {
   Number.prototype.toRadians = function() {
     return this * Math.PI / 180;
   };
