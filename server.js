@@ -9,31 +9,6 @@ app.use(bodyParser.json()); // for parsing application/json
 var api_token = process.env.api_token;
 var openGames = [];
 
-// send a yo:
-var sendYo = function(username){
-  request.post(
-    'http://api.justyo.co/yo/',
-    { form:
-      {
-        'api_token': api_token,
-        'username': username
-        // optional link XOR location string parameter
-      },
-    },
-    function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        console.log(body);
-      }
-    }
-  );
-};
-
-var sendYos = function(usernames){
-  usernames.forEach(function(username){
-    sendYo(username);
-  });
-};
-
 app.post('/yos', function(req, res){
   // body should contain usernames array
   // sends a yo (with optional link or location) to each username
@@ -44,7 +19,8 @@ app.post('/yos', function(req, res){
   res.send(200,'OKAY');
 });
 
-app.post('/play', function(req, res){
+app.get('/play', function(req, res){
+  console.log(req.query)
   var yo = req.body;
   // if @yo
   if( yo.hasOwnProperty('location') ){
@@ -72,3 +48,29 @@ var server = app.listen(3000, function () {
   var port = server.address().port
   console.log('Example app listening at http://%s:%s', host, port)
 });
+
+// HELPER FUNCTIONS
+// send a yo:
+function sendYo(username){
+  request.post(
+    'http://api.justyo.co/yo/',
+    { form:
+      {
+        'api_token': api_token,
+        'username': username
+        // optional link XOR location string parameter
+      },
+    },
+    function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log(body);
+      }
+    }
+  );
+};
+
+function sendYos(usernames){
+  usernames.forEach(function(username){
+    sendYo(username);
+  });
+};
