@@ -19,10 +19,11 @@ app.post('/yos', function(req, res){
   res.send(200,'OKAY');
 });
 
-app.post('/play', function(req, res){
-  var yo = req.body;
+app.get('/play', function(req, res){
+  var yo = req.query;
+  console.log(yo)
   // if @yo
-  if( yo.hasOwnProperty('location') ){
+  if( yo.location ){
     var area = yo.location.split(';').reduce(function(coordinate, index){
       return String(Math.round(Number(coordinate), 4)+index ? ';' : '');
     },'');
@@ -54,7 +55,33 @@ app.post('/play', function(req, res){
 });
 
 var server = app.listen(3000, function () {
-  var host = server.address().address
-  var port = server.address().port
+  var host = server.address().address;
+  var port = server.address().port;
   console.log('Example app listening at http://%s:%s', host, port)
 });
+
+// HELPER FUNCTIONS
+// send a yo:
+function sendYo(username){
+  request.post(
+    'http://api.justyo.co/yo/',
+    { form:
+      {
+        'api_token': api_token,
+        'username': username
+        // optional link XOR location string parameter
+      },
+    },
+    function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log(body);
+      }
+    }
+  );
+};
+
+function sendYos(usernames){
+  usernames.forEach(function(username){
+    sendYo(username);
+  });
+};
