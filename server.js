@@ -7,7 +7,7 @@ var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
 var api_token = process.env.api_token;
-var openGames = [];
+var openGames = {};
 
 app.post('/yos', function(req, res){
   // body should contain usernames array
@@ -24,17 +24,13 @@ app.get('/play', function(req, res){
   console.log(yo)
   // if @yo
   if( yo.location ){
-    var area = yo.location.split(',').reduce(function(coordinate, index){
-      return String(Math.round(Number(coordinate), 4)+index ? ',' : '');
-    },'');
     // if open game nearby exists then join that game
-    if( openGames.indexOf(area) >= 0 ){
+    if ( gameExists(yo.location) ){
       openGames[area].push(yo.username);
     // else create game
     } else {
       openGames.push(new Game(yo.username, yo.location));
     }
-  // if normal yo
   } else {
     //
     // if game.active and yo from marko, yoeach non-player
@@ -74,3 +70,21 @@ function sendYos(usernames){
     sendYo(username);
   });
 };
+
+function gameExists(userLocation){
+  // get list of pending games
+  var pendingGames = Object.keys(openGames);
+
+  // if game is within 10 ft of another game, return true
+  return pendingGames.some(function(pendingGame){
+    var distance = calculators.distance(pendingGame, userLocation).toFeet();
+    return distance < 10;
+  });
+}
+
+/** Converts numeric km to ft */
+if (typeof(Number.prototype.toFeet) === "undefined") {
+  Number.prototype.toFeet = function() {
+    return this * 3280.84;
+  };
+}
