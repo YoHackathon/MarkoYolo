@@ -9,16 +9,6 @@ var openGames = {};
 var activeGames = [];
 var REGISTRATION_WINDOW = 30; //seconds
 
-app.post('/yos', function(req, res){
-  // body should contain usernames array
-  // sends a yo (with optional link or location) to each username
-  // returns success, partial success, or total failure
-  console.log(req.body);
-  var usernames = req.body.usernames;
-  sendYos(usernames);
-  res.send(200,'OKAY');
-});
-
 app.get('/play', function(req, res){
   var yo = req.query;
   console.log(yo)
@@ -59,29 +49,3 @@ var server = app.listen(3000, function () {
   var port = server.address().port;
   console.log('Example app listening at http://%s:%s', host, port)
 });
-
-// HELPER FUNCTIONS
-// send a yo:
-function sendYo(username){
-  request.post(
-    'http://api.justyo.co/yo/',
-    { form:
-      {
-        'api_token': api_token,
-        'username': username
-        // optional link XOR location string parameter
-      },
-    },
-    function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        console.log(body);
-      }
-    }
-  );
-};
-
-function sendYos(usernames){
-  usernames.forEach(function(username){
-    sendYo(username);
-  });
-};
