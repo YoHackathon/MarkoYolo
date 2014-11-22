@@ -14,15 +14,16 @@ app.get('/play', function(req, res){
   console.log(yo)
   // if @yo
   if( yo.location ){
+    var matched = gameMatch(yo.location);
     // if open game nearby exists then join that game
-    if ( gameExists(yo.location) ){
-      openGames[area].push(yo.username);
+    if ( matched ){
+      openGames[matched].push(yo.username);
     // else create game
     } else {
-      var thisGame = new Game(yo.username, yo.location);
-      openGames[area] = thisGame;
+      var newGame = new Game(yo.username, yo.location);
+      openGames[yo.location] = newGame;
       setTimeout(function(){
-        activeGames.push(thisGame);
+        activeGames.push(newGame);
         delete openGames[area];
       }, REGISTRATION_WINDOW*1000);
     }
@@ -45,15 +46,17 @@ var server = app.listen(3000, function () {
   console.log('Example app listening at http://%s:%s', host, port)
 });
 
-function gameExists(userLocation){
+function gameMatch(userLocation){
   // get list of pending games
   var pendingGames = Object.keys(openGames);
 
   // if game is within 10 ft of another game, return true
-  return pendingGames.some(function(pendingGame){
-    var distance = calculators.distance(pendingGame, userLocation).toFeet();
-    return distance < 10;
-  });
+  for (var i = 0; i < pendingGames.length; i++ ){
+    var pendingGameCoordinates = pendingGames[i];
+    var distance = calculators.distance(pendingGameCoordinates, userLocation).toFeet();
+    if (distance < 10) return pendingGameCoordinates;
+  }
+  return null;
 }
 
 /** Converts numeric km to ft */
