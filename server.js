@@ -2,9 +2,11 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
 
-var api_token = process.env.api_token;
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
+
+var api_token = process.env.api_token;
+var openGames = [];
 
 // send a yo:
 var sendYo = function(username){
@@ -39,6 +41,29 @@ app.post('/yos', function(req, res){
   var usernames = req.body.usernames;
   sendYos(usernames);
   res.send(200,'OKAY');
+});
+
+app.post('/play', function(req, res){
+  var yo = req.body;
+  // if @yo
+  if( yo.hasOwnProperty('location') ){
+    var area = yo.location.split(',').reduce(function(coordinate, index){
+      return String(Math.round(Number(coordinate), 4)+index ? ',' : '');
+    },'');
+    // if open game nearby exists then join that game
+    if( openGames.indexOf(area) >= 0 ){
+      openGames[area].push(yo.username);
+    // else create game
+    } else {
+      openGames.push(new Game(yo.username, yo.location));
+    }
+  // if normal yo
+  } else {
+    //
+    // if game.active and yo from marko, yoeach non-player
+    //
+    // if game.active and yo from non-player, end game
+  }
 });
 
 var server = app.listen(3000, function () {
