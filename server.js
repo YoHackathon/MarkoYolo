@@ -73,13 +73,13 @@ function sendYo(username){
       }
     }
   );
-};
+}
 
 function sendYos(usernames){
   usernames.forEach(function(username){
     sendYo(username);
   });
-};
+}
 
 function gameExists(userLocation){
   // get list of pending games
