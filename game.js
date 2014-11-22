@@ -30,7 +30,12 @@ Game.prototype.getMarko = function() {
   return this.marko;
 };
 
-Game.prototype.init = function() {
+Game.prototype.init = function(usersInGames) {
+  console.log('Game beginning!');
+  // add key/value pairs username:thisGame
+  this.players.forEach(function(player){
+    usersInGames[player.username] = this;
+  });
   this.setMarko();
 };
 
@@ -40,8 +45,12 @@ Game.prototype.yoNonMarkos = function(){
   }));
 };
 
-Game.prototype.end = function() {
-  //code for ending game
+Game.prototype.end = function(username, usersInGames) {
+  console.log('Game ending! Player',username,'lost.');
+  // remove key/value pairs username:thisGame
+  this.players.forEach(function(player){
+    delete usersInGames[player.username];
+  });
 };
 
 // HELPER FUNCTIONS
