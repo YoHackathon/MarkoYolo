@@ -9,6 +9,7 @@ var openGames = {};
 var usersInGames = {};
 
 var REGISTRATION_WINDOW = 30; //seconds
+var REGISTRATION_RADIUS = 10; //feet
 
 app.get('/play', function(req, res){
   var yo = req.query;
@@ -17,26 +18,26 @@ app.get('/play', function(req, res){
   if( yo.location ){
     var matched = gameMatch(yo.location);
     // if open game nearby exists then join that game
-    if ( gameExists(yo.location) ){
-      openGames[area].addPlayer(yo.username);
+    if ( matched ){
+      openGames[matched].addPlayer(yo.username);
     } else {
     // else create game
-      var thisGame = new Game(yo.username, yo.location);
-      openGames[area] = thisGame;
+      var newGame = new Game(yo.username, yo.location);
+      openGames[yo.location] = newGame;
       setTimeout(function(){
-        delete openGames[area];
-        thisGame.init(usersInGames);
+        delete openGames[yo.location];
+        newGame.init(usersInGames);
       }, REGISTRATION_WINDOW*1000);
     }
   } else {
-    thisGame = usersInGames[yo.username];
-    var marko = thisGame.getMarko();
+    usersGame = usersInGames[yo.username];
+    var marko = usersGame.getMarko();
     // if game.active and yo from marko, yoeach non-player
     if(yo.username === marko){
-      thisGame.yoNonMarkos();
+      usersGame.yoNonMarkos();
     } else {
     // else game.active and yo from non-player, end game
-      thisGame.end(yo.username, usersInGames);
+      usersGame.end(yo.username, usersInGames);
     }
   }
 });
@@ -51,13 +52,13 @@ var server = app.listen(port, function () {
 
 function gameMatch(userLocation){
   // get list of pending games
-  var pendingGames = Object.keys(openGames);
+  var openGameIDs = Object.keys(openGames);
 
-  // if game is within 10 ft of another game, return true
-  for (var i = 0; i < pendingGames.length; i++ ){
-    var pendingGameCoordinates = pendingGames[i];
-    var distance = calculators.distance(pendingGameCoordinates, userLocation).toFeet();
-    if (distance < 10) return pendingGameCoordinates;
+  // if game is within ## ft of another game, return true
+  for (var i = 0; i < openGameIDs.length; i++ ){
+    var openGameId = openGameIDs[i];
+    var distance = calculators.distance(openGameId, userLocation).toFeet();
+    if (distance < REGISTRATION_RADIUS) return openGameId;
   }
   return null;
 }
