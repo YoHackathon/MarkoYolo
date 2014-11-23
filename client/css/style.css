@@ -982,3 +982,19 @@ ol{
 	text-align: left;
 	margin-left: 23%;
 }
+#github-link{
+	text-decoration: none;
+}
+
+#littleMarko{
+	display:none;
+}
+
+@media screen and (max-width: 1700px){
+	#bigMarko{
+		display: none;
+	}
+	#littleMarko{
+		display: inline;
+	}
+}
