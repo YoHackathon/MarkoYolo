@@ -1,6 +1,6 @@
-// if only one person in a game, cancel it.
-// if person in game and sends @yo, remove from game.
-
+// Once marko selected, yo them.
+// If person in game and sends @yo, remove them from game.
+// If only one person remains in a game on .start or .removePlayer, cancel game.
 
 var express = require('express');
 var bodyParser = require('body-parser');
