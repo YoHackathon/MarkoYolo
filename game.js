@@ -15,26 +15,27 @@ Game.prototype.addPlayer = function(username, location) {
 };
 
 Game.prototype.removePlayer = function(username) {
-  delete players[username];
+  delete this.players[username];
 };
 
 Game.prototype.setMarko = function() {
-  var playerCount = this.players.length;
+  var playerCount = Object.keys(this.players).length;
   var randomIndex = Math.floor(Math.random() * playerCount);
 
-  this.marko = this.players[randomIndex];
-  this.removePlayer(marko.id);
+  this.marko = Object.keys(this.players)[randomIndex];
+  console.log('Set Marko to',this.marko);
+  this.removePlayer(this.marko.username);
 };
 
 Game.prototype.getMarko = function() {
   return this.marko;
 };
 
-Game.prototype.init = function(usersInGames) {
+Game.prototype.start = function(usersInGames) {
   console.log('Game beginning!');
   // add key/value pairs username:thisGame
-  this.players.forEach(function(player){
-    usersInGames[player.username] = this;
+  Object.keys(this.players).forEach(function(username){
+    usersInGames[username] = this;
   });
   this.setMarko();
 };

@@ -1,6 +1,8 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var calculators = require('./calculators');
 var Game = require('./game');
+
 
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
@@ -8,7 +10,7 @@ app.use(bodyParser.json()); // for parsing application/json
 var openGames = {};
 var usersInGames = {};
 
-var REGISTRATION_WINDOW = 30; //seconds
+var REGISTRATION_WINDOW = 5; //seconds
 var REGISTRATION_RADIUS = 10; //feet
 
 app.get('/play', function(req, res){
@@ -16,37 +18,43 @@ app.get('/play', function(req, res){
   console.log(yo)
   // if @yo
   if( yo.location ){
+    console.log('@yo received.')
     var matched = gameMatch(yo.location);
     // if open game nearby exists then join that game
     if ( matched ){
+      console.log('adding player to game');
       openGames[matched].addPlayer(yo.username);
     } else {
     // else create game
+      console.log('creating new game');
       var newGame = new Game(yo.username, yo.location);
       openGames[yo.location] = newGame;
       setTimeout(function(){
         delete openGames[yo.location];
-        newGame.init(usersInGames);
+        newGame.start(usersInGames);
       }, REGISTRATION_WINDOW*1000);
     }
   } else {
+    console.log('yo received');
     usersGame = usersInGames[yo.username];
     var marko = usersGame.getMarko();
     // if game.active and yo from marko, yoeach non-player
     if(yo.username === marko){
+      console.log('Marko pinging nonMarkos');
       usersGame.yoNonMarkos();
     } else {
     // else game.active and yo from non-player, end game
+      console.log('Marko caught a non-marko; ending game.');
       usersGame.end(yo.username, usersInGames);
     }
   }
+  res.status(200).send('OKAY');
 });
 
 var port = process.env.PORT || 4568;
 
 var server = app.listen(port, function () {
   var host = server.address().address;
-  var port = port;
   console.log('Example app listening at http://%s:%s', host, port)
 });
 
