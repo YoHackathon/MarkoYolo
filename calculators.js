@@ -1,8 +1,6 @@
 /** Converts numeric degrees to radians */
-if (typeof(Number.prototype.toRadians) === "undefined") {
-  Number.prototype.toRadians = function() {
-    return this * Math.PI / 180;
-  };
+function deg2rad(deg) {
+  return deg * (Math.PI/180);
 }
 
 exports.distance = function(loc1String, loc2String){
@@ -13,21 +11,16 @@ exports.distance = function(loc1String, loc2String){
   var lat2 = +loc2String.split(';')[0];
   var lon2 = +loc2String.split(';')[1];
 
-  // calculator logic
-  var R = 6371; // km
-  var φ1 = lat1.toRadians();
-  var φ2 = lat2.toRadians();
-  var Δφ = (lat2-lat1).toRadians();
-  var Δλ = (lon2-lon1).toRadians();
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1); 
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+          Math.sin(dLon/2) * Math.sin(dLon/2);
 
-  var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-          Math.cos(φ1) * Math.cos(φ2) *
-          Math.sin(Δλ/2) * Math.sin(Δλ/2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-  var distance = R * c;
-
-  return distance; // returned in km
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var distance = R * c; // Distance in km
+  return distance; // Distance in km
 };
 
 

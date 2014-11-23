@@ -70,10 +70,3 @@ function gameMatch(userLocation){
   }
   return null;
 }
-
-/** Converts numeric km to ft */
-if (typeof(Number.prototype.toFeet) === "undefined") {
-  Number.prototype.toFeet = function() {
-    return this * 3280.84;
-  };
-}
