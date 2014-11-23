@@ -21,10 +21,9 @@ Game.prototype.removePlayer = function(username) {
 Game.prototype.setMarko = function() {
   var playerCount = Object.keys(this.players).length;
   var randomIndex = Math.floor(Math.random() * playerCount);
-
   this.marko = Object.keys(this.players)[randomIndex];
-  console.log('Set Marko to',this.marko);
-  this.removePlayer(this.marko.username);
+  this.removePlayer(this.getMarko());
+  console.log('Set Marko to',this.getMarko());
 };
 
 Game.prototype.getMarko = function() {
@@ -33,24 +32,26 @@ Game.prototype.getMarko = function() {
 
 Game.prototype.start = function(usersInGames) {
   console.log('Game beginning!');
+  var context = this;
   // add key/value pairs username:thisGame
   Object.keys(this.players).forEach(function(username){
-    usersInGames[username] = this;
+    usersInGames[username] = context;
   });
+  console.log('added',Object.keys(this.players),'to usersInGames');
   this.setMarko();
 };
 
 Game.prototype.yoNonMarkos = function(){
-  sendYos(this.players.map(function(player){
-    return player.username;
-  }));
+  var nonMarkos = Object.keys(this.players);
+  console.log(this.getMarko(),'pinging',nonMarkos);
+  sendYos(nonMarkos);
 };
 
 Game.prototype.end = function(username, usersInGames) {
-  console.log('Game ending! Player',username,'lost.');
+  console.log('Game ending! ',this.getMarko(),'caught',username);
   // remove key/value pairs username:thisGame
-  this.players.forEach(function(player){
-    delete usersInGames[player.username];
+  Object.keys(this.players).forEach(function(username){
+    delete usersInGames[username];
   });
 };
 
@@ -73,7 +74,7 @@ function sendYo(username){
     },
     function (error, response, body) {
       if (!error && response.statusCode == 200) {
-        console.log(body);
+        // console.log(body);
       }
     }
   );

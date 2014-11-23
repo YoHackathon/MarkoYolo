@@ -15,18 +15,17 @@ var REGISTRATION_RADIUS = 10; //feet
 
 app.get('/play', function(req, res){
   var yo = req.query;
-  console.log(yo)
   // if @yo
   if( yo.location ){
-    console.log('@yo received.')
+    console.log(' @yo received', yo);
     var matched = gameMatch(yo.location);
     // if open game nearby exists then join that game
     if ( matched ){
-      console.log('adding player to game');
+      console.log('Adding',yo.username,'to game.');
       openGames[matched].addPlayer(yo.username);
     } else {
     // else create game
-      console.log('creating new game');
+      console.log('Creating new game started by',yo.username);
       var newGame = new Game(yo.username, yo.location);
       openGames[yo.location] = newGame;
       setTimeout(function(){
@@ -35,16 +34,14 @@ app.get('/play', function(req, res){
       }, REGISTRATION_WINDOW*1000);
     }
   } else {
-    console.log('yo received');
+    console.log(' yo received', yo);
     usersGame = usersInGames[yo.username];
     var marko = usersGame.getMarko();
     // if game.active and yo from marko, yoeach non-player
     if(yo.username === marko){
-      console.log('Marko pinging nonMarkos');
       usersGame.yoNonMarkos();
     } else {
     // else game.active and yo from non-player, end game
-      console.log('Marko caught a non-marko; ending game.');
       usersGame.end(yo.username, usersInGames);
     }
   }
