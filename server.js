@@ -1,3 +1,7 @@
+// if only one person in a game, cancel it.
+// if person in game and sends @yo, remove from game.
+
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var calculators = require('./calculators');
@@ -11,7 +15,7 @@ var openGames = {};
 var usersInGames = {};
 
 var REGISTRATION_WINDOW = 5; //seconds
-var REGISTRATION_RADIUS = 10; //feet
+var REGISTRATION_RADIUS = 20; //feet
 
 app.get('/play', function(req, res){
   var yo = req.query;
