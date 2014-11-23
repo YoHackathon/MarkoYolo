@@ -23,6 +23,7 @@ Game.prototype.setMarko = function() {
   var randomIndex = Math.floor(Math.random() * playerCount);
   this.marko = Object.keys(this.players)[randomIndex];
   this.removePlayer(this.getMarko());
+  sendYo(this.getMarko());
   console.log('Set Marko to',this.getMarko());
 };
 
@@ -50,8 +51,11 @@ Game.prototype.yoNonMarkos = function(){
 Game.prototype.end = function(username, usersInGames) {
   console.log('Game ending! ',this.getMarko(),'caught',username);
   // remove key/value pairs username:thisGame
-  Object.keys(this.players).forEach(function(username){
+  var allPlayers = Object.keys(this.players);
+  allPlayers.push(this.getMarko());
+  allPlayers.forEach(function(username){
     delete usersInGames[username];
+    sendYo(username);
   });
 };
 
