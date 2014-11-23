@@ -4,15 +4,15 @@
   "description": "Marco Polo with Yo!",
   "main": "server.js",
   "dependencies": {
-    "body-parser": "^1.9.3",
     "express": "^4.10.2",
+    "body-parser": "^1.9.3",
     "request": "^2.48.0"
   },
   "devDependencies": {
     "nodemon": "*"
   },
   "scripts": {
-    "start": "prompt=$(bob); node_modules/.bin/nodemon server.js"
+    "start": "node_modules/.bin/nodemon server.js"
   },
   "repository": {
     "type": "git",
