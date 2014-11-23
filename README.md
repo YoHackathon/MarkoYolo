@@ -1,4 +1,4 @@
-MarkoYolo
+MarkoYolo – Yo Hackathon winner: most fun!
 ==========
 ![MarkoYolo logo](client/images/MarkoYolo.png)
 ####Rules:
