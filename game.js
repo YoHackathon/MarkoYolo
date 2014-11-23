@@ -52,11 +52,11 @@ Game.prototype.end = function(username, usersInGames) {
   console.log('Game ending! ',this.getMarko(),'caught',username);
   // remove key/value pairs username:thisGame
   var allPlayers = Object.keys(this.players);
-  console.log('allPlayers',allPlayers);
   allPlayers.push(this.getMarko());
-  console.log('notifying',allPlayers,'of game`s end');
+  console.log(' notifying',allPlayers,'of game`s end');
   allPlayers.forEach(function(username){
     delete usersInGames[username];
+    console.log(' cleaning up players and notifying',username,'of game end');
     sendYo(username);
   });
 };
