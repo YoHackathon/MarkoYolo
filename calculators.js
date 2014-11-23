@@ -3,7 +3,7 @@ function deg2rad(deg) {
   return deg * (Math.PI/180);
 }
 
-exports.distance = function(loc1String, loc2String){
+exports.distance = function calculateDistance(loc1String, loc2String){
   // strings expected as "latitude;longitude"
   // "42.360091;-71.09415999999999"
   var lat1 = +loc1String.split(';')[0];
@@ -22,5 +22,3 @@ exports.distance = function(loc1String, loc2String){
   var distance = R * c; // Distance in km
   return distance; // Distance in km
 };
-
-
