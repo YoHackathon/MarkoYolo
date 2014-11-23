@@ -66,7 +66,8 @@ function gameMatch(userLocation){
   // if game is within ## ft of another game, return true
   for (var i = 0; i < openGameIDs.length; i++ ){
     var openGameId = openGameIDs[i];
-    var distance = calculators.distance(openGameId, userLocation).toFeet();
+    var distance = calculators.distance(openGameId, userLocation)*3280.8;
+    console.log(' distance from game creator:',distance);
     if (distance < REGISTRATION_RADIUS) return openGameId;
   }
   return null;
