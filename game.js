@@ -3,7 +3,7 @@ var api_token = process.env.api_token;
 
 var Game = function(username, location) {
   this.players = {};
-  this.marko;
+  this.marko; //a username
   this.addPlayer(username, location);
 };
 
@@ -52,7 +52,9 @@ Game.prototype.end = function(username, usersInGames) {
   console.log('Game ending! ',this.getMarko(),'caught',username);
   // remove key/value pairs username:thisGame
   var allPlayers = Object.keys(this.players);
+  console.log('allPlayers',allPlayers);
   allPlayers.push(this.getMarko());
+  console.log('notifying',allPlayers,'of game`s end');
   allPlayers.forEach(function(username){
     delete usersInGames[username];
     sendYo(username);
