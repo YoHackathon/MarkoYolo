@@ -1,7 +1,3 @@
-// Once marko selected, yo them.
-// If person in game and sends @yo, remove them from game.
-// If only one person remains in a game on .start or .removePlayer, cancel game.
-
 var express = require('express');
 var bodyParser = require('body-parser');
 var calculators = require('./calculators');
@@ -14,8 +10,8 @@ app.use(bodyParser.json()); // for parsing application/json
 var openGames = {};
 var usersInGames = {};
 
-var REGISTRATION_WINDOW = 5; //seconds
-var REGISTRATION_RADIUS = 20; //feet
+var REGISTRATION_WINDOW = 10; //seconds
+var REGISTRATION_RADIUS = 1000; //feet
 
 app.get('/play', function(req, res){
   var yo = req.query;
