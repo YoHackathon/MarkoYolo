@@ -1,6 +1,6 @@
 MarkoYolo
 ==========
-![MarkoYolo logo](MarkoYolo.png)
+![MarkoYolo logo](client/images/MarkoYolo.png)
 ####Rules:
 1. Get your friends together in the same place.
 2. Everyone sends an @Yo to MarkoYolo at the same time (~5 second window).

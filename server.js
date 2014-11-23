@@ -3,7 +3,6 @@ var bodyParser = require('body-parser');
 var calculators = require('./calculators');
 var Game = require('./game');
 
-
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
@@ -12,6 +11,11 @@ var usersInGames = {};
 
 var REGISTRATION_WINDOW = 10; //seconds
 var REGISTRATION_RADIUS = 1000; //feet
+
+app.use(express.static(__dirname)); // serve static client
+app.get('/', function(req,res){ // get to static client
+  res.redirect('/client/');
+});
 
 app.get('/play', function(req, res){
   var yo = req.query;
