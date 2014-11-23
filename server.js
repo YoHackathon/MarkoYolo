@@ -1,87 +1,71 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var calculators = require('./calculators');
 var Game = require('./game');
+
 
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 
 var openGames = {};
-var activeGames = [];
-var REGISTRATION_WINDOW = 30; //seconds
+var usersInGames = {};
 
-app.post('/yos', function(req, res){
-  // body should contain usernames array
-  // sends a yo (with optional link or location) to each username
-  // returns success, partial success, or total failure
-  console.log(req.body);
-  var usernames = req.body.usernames;
-  sendYos(usernames);
-  res.send(200,'OKAY');
-});
+var REGISTRATION_WINDOW = 10; //seconds
+var REGISTRATION_RADIUS = 1000; //feet
 
 app.get('/play', function(req, res){
   var yo = req.query;
-  console.log(yo)
   // if @yo
   if( yo.location ){
-    var area = yo.location.split(';').reduce(function(coordinate, index){
-      return String(Math.round(Number(coordinate), 4)+index ? ';' : '');
-    },'');
-    console.log('Rounded',yo.username,'area to',area);
+    console.log(' @yo received', yo);
+    var matched = gameMatch(yo.location);
     // if open game nearby exists then join that game
-    if( openGames.indexOf(area) >= 0 ){
-      openGames[area].addPlayer(yo.username, yo.location);
-    // else create game
+    if ( matched ){
+      console.log('Adding',yo.username,'to game.');
+      openGames[matched].addPlayer(yo.username);
     } else {
-      var thisGame = new Game(yo.username, yo.location);
-      openGames[area] = thisGame;
+    // else create game
+      console.log('Creating new game started by',yo.username);
+      var newGame = new Game(yo.username, yo.location);
+      openGames[yo.location] = newGame;
       setTimeout(function(){
-        activeGames.push(thisGame);
-        delete openGames[area];
+        delete openGames[yo.location];
+        newGame.start(usersInGames);
       }, REGISTRATION_WINDOW*1000);
     }
-  // if normal yo
   } else {
-    thisGame = activeGames.findGame(yo.username);
-    var marko = thisGame.getMarko();
+    console.log(' yo received', yo);
+    usersGame = usersInGames[yo.username];
+    var marko = usersGame.getMarko();
     // if game.active and yo from marko, yoeach non-player
     if(yo.username === marko){
-      thisGame.yoNonMarkos();
-    // if game.active and yo from non-player, end game
+      usersGame.yoNonMarkos();
     } else {
-      thisGame.end();
+    // else game.active and yo from non-player, end game
+      usersGame.end(yo.username, usersInGames);
     }
   }
+  res.status(200).send('OKAY');
 });
 
-var server = app.listen(3000, function () {
+var port = process.env.PORT || 4568;
+
+var server = app.listen(port, function () {
   var host = server.address().address;
-  var port = server.address().port;
   console.log('Example app listening at http://%s:%s', host, port)
 });
 
-// HELPER FUNCTIONS
-// send a yo:
-function sendYo(username){
-  request.post(
-    'http://api.justyo.co/yo/',
-    { form:
-      {
-        'api_token': api_token,
-        'username': username
-        // optional link XOR location string parameter
-      },
-    },
-    function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        console.log(body);
-      }
-    }
-  );
-};
+function gameMatch(userLocation){
+  // get list of pending games
+  var openGameIDs = Object.keys(openGames);
 
-function sendYos(usernames){
-  usernames.forEach(function(username){
-    sendYo(username);
-  });
-};
+  // if game is within ## ft of another game, return true
+  for (var i = 0; i < openGameIDs.length; i++ ){
+    var openGameId = openGameIDs[i];
+    console.log('jon`s logs',openGameId, 'and more stuff:',userLocation);
+    var distance = calculators.distance(openGameId, userLocation)*3280.8;
+    console.log(' distance from game creator:',distance);
+    if (distance < REGISTRATION_RADIUS) return openGameId;
+  }
+  return null;
+}
