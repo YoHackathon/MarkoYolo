@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var calculators = require('./calculators');
 var Game = require('./game');
+var keenio = require('./keenio');
 
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
@@ -19,6 +20,7 @@ app.get('/', function(req,res){ // get to static client
 
 app.get('/play', function(req, res){
   var yo = req.query;
+  keenio.log(yo);
   // if @yo
   if( yo.location ){
     console.log(' @yo received', yo);
